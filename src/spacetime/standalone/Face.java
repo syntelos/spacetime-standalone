@@ -19,9 +19,10 @@
 package spacetime.standalone;
 
 /**
- * A face is a list of vertices in order: normal, first, second, and
- * third vertices.  Within each face the normal is not indexed, and
- * the face vertices are indexed.
+ * A face is a list of faces, or a list vertices in order: first,
+ * second, and third vertices.  Within each face the normal is not
+ * indexed and not listed, only the face vertices are indexed (and
+ * listed).
  * 
  * @see STL
  */
@@ -29,7 +30,8 @@ public class Face
     extends Spacetime
 {
     /**
-     * Out of band face normal is not indexed
+     * Out of band face normal is not indexed and is not a member of
+     * the face list.
      */
     public class Normal
         extends Spacetime
@@ -203,6 +205,9 @@ public class Face
         else
             throw new UnsupportedOperationException();
     }
+    /**
+     * @param f Add or index according the face index enum
+     */
     public <R extends Face> R face(R f){
 
         switch(this.facex){

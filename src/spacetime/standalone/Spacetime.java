@@ -27,11 +27,11 @@ import lxl.Index;
  * @see Key
  * @see Face
  */
-public class Spacetime
-    extends lxl.ArrayList<Spacetime>
+public class Spacetime<E extends Enum<E>>
+    extends lxl.ArrayList<Spacetime<E>>
     implements spacetime.SpacetimeObject<java.lang.Float>,
                spacetime.SpacetimeFrame<java.lang.Float>,
-               spacetime.Spacetime<java.lang.Float,Spacetime>
+               spacetime.Spacetime<java.lang.Float,Spacetime<E>>
 {
     protected Spacetime frame;
 
@@ -45,7 +45,7 @@ public class Spacetime
      */
     protected float resolution = 1.0f;
 
-    protected transient Index<Key> index = new Index();
+    protected transient volatile Index<Key> stx;
 
     
 
@@ -100,49 +100,92 @@ public class Spacetime
     public SpacetimeMotion getSpacetimeMotion(){
         return this.motion;
     }
-
     public void clear(){
-        if (null != this.index)
-            this.index.clear();
+        if (null != this.stx)
+            this.stx.clear();
+
         super.clear();
     }
-    public void reindex(){
-
-        this.index = this.index.reindex();
-    }
-    public <R extends Spacetime> R clone(){
-
-        R clone = (R)super.clone();
-        if (null != this.index)
-            clone.index = this.index.clone();
-        return clone;
-    }
-    public <R extends Spacetime> R get(Float x, Float y, Float z, Float t){
+    /**
+     * Indexed space time list
+     */
+    public <R extends Spacetime<E>> R get(Float x, Float y, Float z, Float t){
 
         final Key key = Key.For(x,y,z,t,this.resolution);
 
-        int idx = this.index.get(key);
+        final Index<Key> stx = this.stx();
+
+        final int idx = stx.get(key);
 
         return (R)super.get(idx);
     }
-    public <R extends Spacetime> R put(R p){
+    /**
+     * Indexed space time list
+     */
+    public <R extends Spacetime<E>> R put(R p){
 
         final Key key = Key.For(x,y,z,t,this.resolution);
 
-        int idx = index.get(key);
+        final Index<Key> stx = this.stx();
+
+        int idx = stx.get(key);
         if (-1 == idx){
             idx = super.add(p);
-            index.put(key,idx);
+            stx.put(key,idx);
 
-            this.reindex();
+            this.restx();
         }
         else
             super.set(idx,p);
 
         return p;
     }
-    public <R extends Spacetime> java.lang.Iterable<R> iterable(){
+    /**
+     * Enumerated list
+     */
+    public <R extends Spacetime<E>> R get(E en){
+
+        return (R)super.get(en.ordinal());
+    }
+    /**
+     * Enumerated list
+     */
+    public <R extends Spacetime<E>> R put(E en, R p){
+
+        super.set(en.ordinal(),p);
+
+        return p;
+    }
+    /**
+     * @return List for iteration
+     */
+    public <R extends Spacetime<E>> java.lang.Iterable<R> iterable(){
         return (Iterable<R>)this;
+    }
+    public void restx(){
+        Index<Key> stx = this.stx;
+        if (null != stx){
+            this.stx = stx.reindex();
+        }
+    }
+    public <R extends Spacetime<E>> R clone(){
+
+        R clone = (R)super.clone();
+
+        Index<Key> stx = this.stx;
+        if (null != stx){
+            clone.stx = stx.clone();
+        }
+
+        return clone;
+    }
+    protected Index<Key> stx(){
+        Index<Key> stx = this.stx;
+        if (null == stx){
+            stx = new Index();
+            this.stx = stx;
+        }
+        return stx;
     }
 
     protected final static int Index(float ordinal, float resolution){

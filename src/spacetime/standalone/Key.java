@@ -162,94 +162,46 @@ public class Key
 
         if (null == that)
             return +1;
-        else if (this.x > that.x){
+        else if (this.x >= that.x){
 
-            if (this.y > that.y){
+            if (this.y >= that.y){
 
-                if (this.z > that.z){
+                if (this.z >= that.z){
                     /*
                      * +X,+Y,+Z,*T
                      */
-                    return +1;
-                }
-                else if (this.t > that.t){
-                    /*
-                     * +X,+Y,-Z,+T
-                     */
-                    return +1;
+                    if (this.x == that.x && this.y == that.y && this.z == that.z && this.t == that.t)
+                        return 0;
+                    else if (this.t >= that.t){
+                        /*
+                         * +X,+Y,+Z,+T
+                         */
+                        return +1;
+                    }
+                    else {
+                        /*
+                         * +X,+Y,+Z,-T
+                         */
+                        return -1;
+                    }
                 }
                 else {
                     /*
-                     * +X,+Y,-Z,-T (break)-
+                     * +X,+Y,-Z,*T
                      */
                     return -1;
                 }
             }
-            else if (this.z > that.z){
-                /*
-                 * +X,-Y,+Z,+T
-                 */
-                return +1;
-            }
-            else if (this.t > that.t){
-                /*
-                 * +X,-Y,-Z,+T (break)-
-                 */
-                return -1;
-            }
             else {
                 /*
-                 * +X,-Y,-Z,-T
-                 */
-                return -1;
-            }
-        }
-        else if (this.y > that.y){
-
-            if (this.z > that.z){
-                if (this.t > that.t){
-                    /*
-                     * -X,+Y,+Z,+T
-                     */
-                    return +1;
-                }
-                else {
-                    /*
-                     * -X,+Y,+Z,-T (break)-
-                     */
-                    return -1;
-                }
-            }
-            else if (this.t > that.t){
-                /*
-                 * -X,+Y,-Z,+T (break)+
-                 */
-                return +1;
-            }
-            else {
-                /*
-                 * -X,+Y,-Z,-T
-                 */
-                return -1;
-            }
-        }
-        else if (this.z > that.z){
-            if (this.t > that.t){
-                /*
-                 * -X,-Y,+Z,+T (break)+
-                 */
-                return +1;
-            }
-            else {
-                /*
-                 * -X,-Y,+Z,-T
+                 * +X,-Y,*Z,*T
                  */
                 return -1;
             }
         }
         else {
             /*
-             * -X,-Y,-Z,*T
+             * -X,*Y,*Z,*T
              */
             return -1;
         }
