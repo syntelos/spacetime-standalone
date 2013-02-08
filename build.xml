@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<project name="spacetime-standalone" default="update">
+
+  <tstamp/>
+
+  <property name="src"  location="${basedir}/src"/>
+  <property name="lib"  location="${basedir}/lib"/>
+  <property name="tgt"  location="${basedir}/tgt"/>
+  <property name="dst"  location="${basedir}"/>
+  <property name="ant"  location="${basedir}/ant"/>
+  <property name="ver"  location="${basedir}/ver"/>
+
+  <property name="compiler.source" value="1.5"/>
+  <property name="compiler.target" value="1.5"/>
+  <property name="compiler.optimize" value="false"/>
+  <property name="compiler.debug" value="true"/>
+  <property name="compiler.deprecation" value="false"/>
+  <property name="compiler.encoding" value="utf-8"/>
+
+  <property name="main.class" value="spacetime.standalone.STL"/>
+
+  <import file="${ant}/build.in.update.xml"/>
+
+  <property file="${user.home}/update.properties"/>
+
+  <path id="lib.path">
+    <fileset dir="${lib}">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+
+
+  <target name="update" depends="jar" if="spacetime-standalone.update">
+
+    <do-update src="${target.jar}" tgt="${spacetime-standalone.update}"/>
+  </target>
+
+  <target name="jar" depends="compile" description="Create JAR. Dep 'compile'.">
+    <delete>
+      <fileset dir="${dst}" includes="spacetime-standalone-*.jar" />
+    </delete>
+
+    <java outputproperty="lib.path.manifest" classpath="${ant}" classname="LibPathManifest" failonerror="true">
+
+      <arg value="${toString:lib.path}"/>
+    </java>
+    <echo message="Class-Path: ${lib.path.manifest}"/>
+    <echo message="Main-Class: ${main.class}"/>
+
+    <jar jarfile="${target.jar}" >
+
+      <manifest>
+        <attribute name="Class-Path" value="${lib.path.manifest}"/>
+        <attribute name="Main-Class" value="${main.class}"/>
+      </manifest>
+      <fileset dir="${tgt}" includes="**/*.class" />
+    </jar>
+    <delete dir="${tgt}"/>
+  </target>
+
+  <target name="compile" depends="version">
+    <mkdir dir="${tgt}"/>
+
+
+    <copy file="${ver}/src/spacetime/standalone/Version.java" tofile="${src}/spacetime/standalone/Version.java"
+          filtering="true" overwrite="true">
+      <filterset>
+        <filter token="VersionMajor" value="${version.major}"/>
+        <filter token="VersionMinor" value="${version.minor}"/>
+        <filter token="VersionBuild" value="${version.build}"/>
+        <filter token="VersionName"  value="${version.name}"/>
+      </filterset>
+    </copy>
+
+    <javac srcdir="${src}" destdir="${tgt}" debug="${compiler.debug}" encoding="${compiler.encoding}"
+           classpathref="lib.path" source="${compiler.source}" target="${compiler.target}"
+           includeAntRuntime="false">
+    </javac>
+  </target>
+
+  <target name="clean" depends="version" description="Clean up project.">
+    <delete dir="${tgt}" quiet="true"/>
+    <delete>
+      <fileset dir="${dst}" includes="spacetime-standalone-*.jar" />
+    </delete>
+  </target>
+
+  <target name="version" description="Report current project version.">
+    <property file="build.version"/>
+    <fail unless="version.major"/>
+    <fail unless="version.minor"/>
+    <fail unless="version.build"/>
+    <property name="version.name" value="${ant.project.name}"/>
+    <property name="this.version" value="${version.major}.${version.minor}.${version.build}"/>
+    <echo>         ${version.name} ${this.version}
+    </echo>
+    <property name="target.jar" value="${dst}/${version.name}-${this.version}.jar"/>
+    <property name="target-test.jar" value="${dst}/${version.name}-test-${this.version}.jar"/>
+
+  </target>
+
+  <target name="major" description="Increment project version.">
+
+    <propertyfile file="build.version">
+      <entry key="version.major" type="int" operation="+" value="1"/>
+    </propertyfile>
+    <property file="build.version"/>
+    <fail unless="version.major"/>
+    <fail unless="version.minor"/>
+    <fail unless="version.build"/>
+    <property name="version.name" value="${ant.project.name}"/>
+    <property name="this.version" value="${version.major}.${version.minor}.${version.build}"/>
+    <echo>         ${version.name} ${this.version}
+    </echo>
+  </target>
+
+  <target name="minor" description="Increment project version.">
+
+    <propertyfile file="build.version">
+      <entry key="version.minor" type="int" operation="+" value="1"/>
+    </propertyfile>
+    <property file="build.version"/>
+    <fail unless="version.major"/>
+    <fail unless="version.minor"/>
+    <fail unless="version.build"/>
+    <property name="version.name" value="${ant.project.name}"/>
+    <property name="this.version" value="${version.major}.${version.minor}.${version.build}"/>
+    <echo>         ${version.name} ${this.version}
+    </echo>
+  </target>
+
+  <target name="build" description="Increment project version.">
+
+    <propertyfile file="build.version">
+      <entry key="version.build" type="int" operation="+" value="1"/>
+    </propertyfile>
+    <property file="build.version"/>
+    <fail unless="version.major"/>
+    <fail unless="version.minor"/>
+    <fail unless="version.build"/>
+    <property name="version.name" value="${ant.project.name}"/>
+    <property name="this.version" value="${version.major}.${version.minor}.${version.build}"/>
+    <echo>         ${version.name} ${this.version}
+    </echo>
+  </target>
+
+</project>
