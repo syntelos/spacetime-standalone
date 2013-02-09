@@ -208,9 +208,10 @@ public class Spacetime<E extends Enum<E>>
             this.rtx = rtx.reindex();
         }
     }
-    public <R extends Spacetime<E>> R clone(){
+    @Override
+    public Spacetime<E> clone(){
 
-        R clone = (R)super.clone();
+        Spacetime<E> clone = (Spacetime<E>)super.clone();
 
         Index<Key> stx = this.stx;
         if (null != stx){
