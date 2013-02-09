@@ -46,6 +46,7 @@ public class Spacetime<E extends Enum<E>>
     protected float resolution = 1.0f;
 
     protected transient volatile Index<Key> stx;
+    protected transient volatile Index rtx;
 
     
 
@@ -104,6 +105,9 @@ public class Spacetime<E extends Enum<E>>
         if (null != this.stx)
             this.stx.clear();
 
+        if (null != this.rtx)
+            this.rtx.clear();
+
         super.clear();
     }
     /**
@@ -157,6 +161,36 @@ public class Spacetime<E extends Enum<E>>
         return p;
     }
     /**
+     * Runtime key list
+     */
+    public <K extends Comparable<K>, R extends Spacetime<E>> R get(K k){
+
+        final Index rtx = this.rtx();
+
+        final int idx = rtx.get(k);
+
+        return (R)super.get(idx);
+    }
+    /**
+     * Runtime key list
+     */
+    public <K extends Comparable<K>, R extends Spacetime<E>> R put(K k, R p){
+
+        final Index rtx = this.rtx();
+
+        int idx = rtx.get(k);
+        if (-1 == idx){
+            idx = super.add(p);
+            rtx.put(k,idx);
+
+            this.rertx();
+        }
+        else
+            super.set(idx,p);
+
+        return p;
+    }
+    /**
      * @return List for iteration
      */
     public <R extends Spacetime<E>> java.lang.Iterable<R> iterable(){
@@ -168,6 +202,12 @@ public class Spacetime<E extends Enum<E>>
             this.stx = stx.reindex();
         }
     }
+    public void rertx(){
+        Index rtx = this.rtx;
+        if (null != rtx){
+            this.rtx = rtx.reindex();
+        }
+    }
     public <R extends Spacetime<E>> R clone(){
 
         R clone = (R)super.clone();
@@ -175,6 +215,11 @@ public class Spacetime<E extends Enum<E>>
         Index<Key> stx = this.stx;
         if (null != stx){
             clone.stx = stx.clone();
+        }
+
+        Index rtx = this.rtx;
+        if (null != rtx){
+            clone.rtx = rtx.clone();
         }
 
         return clone;
@@ -186,6 +231,14 @@ public class Spacetime<E extends Enum<E>>
             this.stx = stx;
         }
         return stx;
+    }
+    protected Index rtx(){
+        Index rtx = this.rtx;
+        if (null == rtx){
+            rtx = new Index();
+            this.rtx = rtx;
+        }
+        return rtx;
     }
 
     protected final static int Index(float ordinal, float resolution){

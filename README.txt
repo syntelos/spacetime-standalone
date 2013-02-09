@@ -11,7 +11,7 @@ Spacetime Standalone Overview
 
   The principal class is Spacetime.  It extends an array list and
   implements the space time index.  It provides multiple feature sets
-  for list, xyzt map and enum map applications.
+  for list and map applications.
 
   The STL class reads and writes Spacetime objects in the Face schema,
   demonstrating the list and xyzt map feature sets.  The STL write
@@ -27,6 +27,11 @@ Spacetime Standalone API
     permits unindexed list operations on the child Spacetime objects
     of a container Spacetime object.
 
+  List index
+
+    When used as an ordered list, the array list structure is indexed
+    in the list order for unsigned integer keys.
+
   XY[Z[T]] index
 
     The get(Spacetime) and put(Spacetime) methods implemented in the
@@ -38,5 +43,11 @@ Spacetime Standalone API
     The get(Enum) and put(Enum,Spacetime) methods defined in the
     Spacetime class provide for an enumerated list of children
     contained in a container Spacetime object.
+
+  Comparable index
+
+    The get(Comparable) and put(Comparable,Spacetime) methods defined
+    in the Spacetime class provide for a runtime indexed list of
+    children contained in a container Spacetime object.
 
 
