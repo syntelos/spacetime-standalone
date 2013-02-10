@@ -51,3 +51,7 @@ Spacetime Standalone API
     children contained in a container Spacetime object.
 
 
+See also
+
+  http://github.com/syntelos/spacetime
+  http://github.com/syntelos/spacetime-standalone-airfoil

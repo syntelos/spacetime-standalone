@@ -139,9 +139,11 @@ public class Spacetime<E extends Enum<E>>
 
             this.restx();
         }
-        else
-            super.set(idx,p);
+        else {
+            super.ensure(idx);
 
+            super.set(idx,p);
+        }
         return p;
     }
     /**
@@ -155,6 +157,8 @@ public class Spacetime<E extends Enum<E>>
      * Enumerated list
      */
     public <R extends Spacetime<E>> R put(E en, R p){
+
+        super.ensure(en.ordinal());
 
         super.set(en.ordinal(),p);
 
@@ -185,9 +189,11 @@ public class Spacetime<E extends Enum<E>>
 
             this.rertx();
         }
-        else
-            super.set(idx,p);
+        else {
+            super.ensure(idx);
 
+            super.set(idx,p);
+        }
         return p;
     }
     /**
